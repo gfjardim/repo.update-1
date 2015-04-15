@@ -225,14 +225,21 @@ switch ($_POST['action']) {
     }
     $file = @file_get_contents($infoFile);
     $ct='';
+
     foreach (json_decode($file, TRUE) as $repo) {
       $img = in_docker_repos($repo['url']) ? "src='/plugins/$plugin/images/red.png' title='Click To Remove Repository'" : "src='/plugins/$plugin/images/green.png' title='Click To Add Repository'";
-      $c = sprintf("<h2>%s <img %s style='width:48px;height:48px;cursor:pointer;' onclick='toggleRepo(this, \"%s\")'></h2>", 
-             $repo['name'], 
-             $img, 
-             $repo['url']);
+      $repoName = $repo['name'];
+      $c = sprintf("<h2><img %s style='width:48px;height:48px;cursor:pointer;' onclick='toggleRepo(this, \"%s\")'> <a title=\"Click To Expand/Collapse\" onclick=\"toggleTable('$repoName');\" href='#'>%s</h2>", 
+             $img,
+             $repo['url'],
+             $repo['name']);
       $forum = $repo['forum'] ? $repo['forum'] : "";
-      $c .= "<table class='tablesorter repositories'><thead><tr><th></th><th>Name</th><th>Author</th><th>Description</th></tr></thead><tbody>";
+
+      if ($filter) {
+          $c .= "<table class='tablesorter repositories' id=$repoName><thead><tr><th></th><th>Name</th><th>Author</th><th>Description</th></tr></thead><tbody>";
+      } else {
+          $c .= "<table class='tablesorter repositories' id=$repoName style=\"display:none\"><thead><tr><th></th><th>Name</th><th>Author</th><th>Description</th></tr></thead><tbody>";
+     }
       $t = "";
       foreach ($repo['templates'] as $template) {
         if ($filter) {
