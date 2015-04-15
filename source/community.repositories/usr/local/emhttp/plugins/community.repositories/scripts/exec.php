@@ -46,8 +46,14 @@ class Community {
     return $paths;
   }
 
+  private function build_sorter($key) {
+    return function ($a, $b) use ($key) {
+      return strnatcmp(strtolower($a[$key]), strtolower($b[$key]));
+    };
+  }
+
   public function download_url($url, $path = "", $bg = FALSE){
-    exec("curl --max-time 30 -s -k -L ".($path ? " -o '$path' " : "")." $url ".($bg ? ">/dev/null 2>&1 &" : "2>/dev/null"), $out, $exit_code );
+    exec("curl --max-time 30 --silent --insecure --location --fail ".($path ? " -o '$path' " : "")." $url ".($bg ? ">/dev/null 2>&1 &" : "2>/dev/null"), $out, $exit_code );
     return ($exit_code === 0 ) ? implode("\n", $out) : FALSE;
   }
 
@@ -134,12 +140,20 @@ class Community {
 
   public function DownloadCommunityTemplates() {
     global $dockerManPaths, $infoFile, $DockerTemplates, $plugin;
-    shell_exec("rm -rf '".$dockerManPaths['templates-community']."'");
     $output = array();
-    $Repos  = json_decode($this->download_url($dockerManPaths['community-templates-url']), TRUE);
+    if (! $download = $this->download_url($dockerManPaths['community-templates-url']) ){
+      return false;
+    }
+    $Repos  = json_decode($download, TRUE);
+    usort($Repos, $this->build_sorter('name'));
+
+    shell_exec("rm -rf '".$dockerManPaths['templates-community']."'");
     $downloadURL = "/tmp/tmp-".mt_rand().".url";
     file_put_contents($downloadURL, implode(PHP_EOL,array_map(function($ar){return $ar['url'];},$Repos)) );
-    $templates = $this->downloadTemplates($dockerManPaths['templates-community']."/templates", $downloadURL);
+    if (! $templates = $this->downloadTemplates($dockerManPaths['templates-community']."/templates", $downloadURL)){
+      return false;
+    }
+    unlink($downloadURL);
     foreach ($Repos as $Repo) {
       $tmpls = array();
       foreach ($templates[$Repo['url']] as $file) {
@@ -185,8 +199,8 @@ class Community {
       }
       $output[] = array('name'=>$Repo['name'], 'templates'=>$tmpls, 'url'=>$Repo['url']);
     }
-    shell_exec("rm -rf '$downloadURL'");
     file_put_contents($dockerManPaths['community-templates-info'], json_encode($output, JSON_UNESCAPED_SLASHES));
+    return true;
   }
 }
 
@@ -221,25 +235,24 @@ switch ($_POST['action']) {
     $docker_repos = is_file($docker_repos) ? file($docker_repos,FILE_IGNORE_NEW_LINES) : array();
     if (! file_exists($infoFile)) {
       $Community = new Community();
-      $Community->DownloadCommunityTemplates();
+      if (! $Community->DownloadCommunityTemplates()) {
+        echo "<div style='padding-top:79px;width:100%;text-align:center;'>
+                <div style='background: linear-gradient(#E0E0E0,#C0C0C0);padding: 5px 20px 5px 6px;text-align:left;'><i class='fa fa-download fa-lg'></i> Info Download</div>
+                <div style='text-align:center;font-style:italic;padding-top:10px;'>Download has failed.</div>
+              </div>"; 
+      }
     }
-    $file = @file_get_contents($infoFile);
+    $file = json_decode(@file_get_contents($infoFile),TRUE);
     $ct='';
-
-    foreach (json_decode($file, TRUE) as $repo) {
+    if (! is_array($file)) goto END;
+    foreach ($file as $repo) {
       $img = in_docker_repos($repo['url']) ? "src='/plugins/$plugin/images/red.png' title='Click To Remove Repository'" : "src='/plugins/$plugin/images/green.png' title='Click To Add Repository'";
-      $repoName = $repo['name'];
-      $c = sprintf("<h2><img %s style='width:48px;height:48px;cursor:pointer;' onclick='toggleRepo(this, \"%s\")'> <a title=\"Click To Expand/Collapse\" onclick=\"toggleTable('$repoName');\" href='#'>%s</h2>", 
-             $img,
-             $repo['url'],
-             $repo['name']);
+      $c = sprintf("<h2>%s <img %s style='width:48px;height:48px;cursor:pointer;' onclick='toggleRepo(this, \"%s\")'></h2>", 
+             $repo['name'], 
+             $img, 
+             $repo['url']);
       $forum = $repo['forum'] ? $repo['forum'] : "";
-
-      if ($filter) {
-          $c .= "<table class='tablesorter repositories' id=$repoName><thead><tr><th></th><th>Name</th><th>Author</th><th>Description</th></tr></thead><tbody>";
-      } else {
-          $c .= "<table class='tablesorter repositories' id=$repoName style=\"display:none\"><thead><tr><th></th><th>Name</th><th>Author</th><th>Description</th></tr></thead><tbody>";
-     }
+      $c .= "<table class='tablesorter repositories'><thead><tr><th></th><th>Name</th><th>Author</th><th>Description</th></tr></thead><tbody>";
       $t = "";
       foreach ($repo['templates'] as $template) {
         if ($filter) {
@@ -277,6 +290,7 @@ switch ($_POST['action']) {
     } else {
       echo $ct;
     }
+    END:
     echo "<script>
             var searching = false;
             el=$('.repositories tbody tr td:nth-child(2)');var max = 0;$(el).each(function(){max=Math.max($(this).textWidth(),max);});$(el).css('width',max+'px');;

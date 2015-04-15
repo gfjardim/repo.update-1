@@ -55,7 +55,7 @@ $plugin ="community.repositories";
   function searchBoxIcon(icon) {
     if (icon == 'remove' && $('#searchbox').val().length) {
       $('#search_button').attr('class','fa fa-lg fa-remove');$('.searchsubmit').unbind('click').click(function(){$('#searchbox').val('');doSearch();});
-    } else if (minLength($("#searchbox").val()) > 2) {
+    } else if (minLength($("#searchbox").val()) > 2 || ! $('#searchbox').val().length) {
       $('#search_button').attr('class','fa fa-lg fa-search');$('.searchsubmit').unbind('click').click(function(){doSearch();});
     } else {
       $('#search_button').attr('class','fa fa-lg fa-ban');$('.searchsubmit').unbind('click');
@@ -106,15 +106,9 @@ $plugin ="community.repositories";
       setTimeout('getContent()',250);
     }
   };
-
-function toggleTable(whichTable) {
-    var lTable = document.getElementById(whichTable);
-    lTable.style.display = (lTable.style.display == "table") ? "none" : "table";
-  }
 </script>
-
 <div style='position:relative;float:right;padding-top:40px;padding-bottom:5px;vertical-align:text-bottom;'>
-  <input type='text' id='searchbox' placeholder='Search Repositories.  3 Characters Minimum' style='position:relative;left: 15px;'><button class='searchsubmit'><i id='search_button' class='fa fa-remove fa-lg'></i></button>
+  <input type='text' id='searchbox' placeholder='Search' style='position:relative;left: 15px;'><button class='searchsubmit'><i id='search_button' class='fa fa-remove fa-lg'></i></button>
   <span style='width:10px;'>&nbsp;</span><input type='button' value='Update Repositories' onclick='forceUpdate();'>
 </div>
 <div id='repo_content'  style='min-height:200px;'>
