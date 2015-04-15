@@ -2,7 +2,7 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "community.repositories">
 <!ENTITY author    "gfjardim/Squid">
-<!ENTITY version   "2015.04.13a">
+<!ENTITY version   "2015.04.14a">
 <!ENTITY launch    "Docker">
 <!ENTITY plugdir   "/usr/local/emhttp/plugins/&name;">
 <!ENTITY github    "Squidly271/repo.update">
