@@ -1,0 +1,97 @@
+[
+  {
+    "name": "gfjardim",
+    "url": "https://github.com/gfjardim/docker-containers/tree/templates",
+    "forum": "http://lime-technology.com/forum/index.php?topic=39227.0"
+  },
+  {
+    "name": "smdion",
+    "url": "https://github.com/smdion/docker-containers/tree/templates",
+    "forum": "http://lime-technology.com/forum/index.php?topic=34009.0"
+  },
+  {
+    "name": "smdion-beta",
+    "url": "https://github.com/smdion/docker-containers/tree/beta-templates",
+    "forum": "http://lime-technology.com/forum/index.php?topic=34009.0"
+  },
+  {
+    "name": "pducharme",
+    "url": "https://github.com/pducharme/docker-containers/tree/templates",
+    "forum": "http://lime-technology.com/forum/index.php?topic=37058.msg343017#msg343017"
+  },
+  {
+    "name": "CaptInsano",
+    "url": "https://github.com/CaptInsano/docker-containers/tree/templates",
+    "forum": ""
+  },
+  {
+    "name": "IanCole",
+    "url": "https://github.com/digitalman2112/docker-templates/tree/master/digitalman2112",
+    "forum": "http://lime-technology.com/forum/index.php?topic=37556.msg347299#msg347299"
+  },
+  {
+    "name": "Sparklyballs",
+    "url": "https://github.com/sparklyballs/docker-repo/tree/templates",
+    "forum": "http://lime-technology.com/forum/index.php?topic=37209.0"
+  },
+  {
+    "name": "Sparklyballs-Beta",
+    "url": "https://github.com/sparklyballs/beta-repo/tree/master/Sparkly-Beta",
+    "forum": "http://lime-technology.com/forum/index.php?topic=38232.0"
+  },
+  {
+    "name": "Balloob",
+    "url": "https://github.com/balloob/unraid-docker-templates",
+    "forum": "http://lime-technology.com/forum/index.php?topic=36535.msg339480.0"
+  },
+  {
+    "name": "HurricaneHernandez",
+    "url": "https://github.com/HurricaneHernandez/container-templates",
+    "forum": ""
+  },
+  {
+    "name": "Binhex",
+    "url": "https://github.com/binhex/docker-templates",
+    "forum": "http://lime-technology.com/forum/index.php?topic=38055.0"
+  },
+  {
+    "name": "Zuhkov",
+    "url": "https://github.com/Zuhkov/docker-containers/tree/templates",
+    "forum": "http://lime-technology.com/forum/index.php?topic=38410.0"
+  },
+  {
+    "name": "Zuhkov-Beta",
+    "url": "https://github.com/Zuhkov/docker-containers/tree/beta-templates",
+    "forum": "http://lime-technology.com/forum/index.php?topic=38410.0"
+  },
+  {
+    "name": "Spant",
+    "url": "https://github.com/spants/unraidtemplates",
+    "forum": "http://lime-technology.com/forum/index.php?topic=38486.0"
+  },
+  {
+    "name": "dmaxwell",
+    "url": "https://github.com/dmaxwell351/docker-containers/tree/templates",
+    "forum": "http://lime-technology.com/forum/index.php?topic=38548.0"
+  },
+  {
+    "name": "tobbenb",
+    "url": "https://github.com/tobbenb/docker-containers/tree/templates",
+    "forum": "http://lime-technology.com/forum/index.php?topic=37671.msg348291#msg348291"
+  },
+  {
+    "name": "pinion",
+    "url": "https://github.com/noinip/container-templates/tree/master/pinion",
+    "forum": "http://lime-technology.com/forum/index.php?topic=38602.0"
+  },
+  {
+    "name": "Bungy",
+    "url": "https://github.com/jshridha/templates",
+    "forum": "http://lime-technology.com/forum/index.php?topic=38930.0"
+  },
+  {
+    "name": "SlrG",
+    "url": "https://github.com/SlrG/docker-templates",
+    "forum": "http://lime-technology.com/forum/index.php?topic=39050.0"
+  }
+]
