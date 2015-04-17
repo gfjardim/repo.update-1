@@ -54,7 +54,7 @@ class Community {
 
   public function download_url($url, $path = "", $bg = FALSE){
     exec("curl --max-time 30 --silent --insecure --location --fail ".($path ? " -o '$path' " : "")." $url ".($bg ? ">/dev/null 2>&1 &" : "2>/dev/null"), $out, $exit_code );
-    return ($exit_code === 0 ) ? implode("\n", $out) : FALSE;
+    return ($exit_code === 0 ) ? implode("\n", $out) : NULL;
   }
 
   public function downloadTemplates($Dest=NULL, $Urls=NULL){
@@ -159,7 +159,7 @@ class Community {
       foreach ($templates[$Repo['url']] as $file) {
         if (is_file($file)){
           $doc              = new DOMDocument();
-          $doc->load($file);
+          @$doc->load($file);
           $o['Path']        = $file;
           $o['Repository']  = stripslashes($doc->getElementsByTagName( "Repository" )->item(0)->nodeValue);
           $o['Author']      = preg_replace("#/.*#", "", $o['Repository']);
