@@ -53,7 +53,7 @@ class Community {
   }
 
   public function download_url($url, $path = "", $bg = FALSE){
-    exec("curl --max-time 30 --silent --insecure --location --fail ".($path ? " -o '$path' " : "")." $url ".($bg ? ">/dev/null 2>&1 &" : "2>/dev/null"), $out, $exit_code );
+    exec("curl --max-time 60 --silent --insecure --location --fail ".($path ? " -o '$path' " : "")." $url ".($bg ? ">/dev/null 2>&1 &" : "2>/dev/null"), $out, $exit_code );
     return ($exit_code === 0 ) ? implode("\n", $out) : NULL;
   }
 
@@ -85,7 +85,7 @@ class Community {
           break;
         }
       }
-      if ( $this->download_url($github_api['url'], "$tmp_dir.tar.gz") === FALSE) {
+      if ( $this->download_url($github_api['url'], "$tmp_dir.tar.gz") === NULL) {
         $this->debug("\n Download ". $github_api['url'] ." has failed.");
         return NULL;
       } else {
