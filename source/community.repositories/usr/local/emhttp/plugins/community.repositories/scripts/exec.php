@@ -250,15 +250,14 @@ switch ($_POST['action']) {
     $file = json_decode(@file_get_contents($infoFile),TRUE);
     $ct='';
     if (! is_array($file)) goto END;
+
+      $c = "<table class='tablesorter repositories'><thead><tr><th></th><th>Name</th><th>Author</th><th>Repository</th><th>Description</th></tr></thead><tbody>";
+      $t = "";
+
+
     foreach ($file as $repo) {
       $img = in_docker_repos($repo['url']) ? "src='/plugins/$plugin/images/red.png' title='Click To Remove Repository'" : "src='/plugins/$plugin/images/green.png' title='Click To Add Repository'";
-      $c = sprintf("<h2><img %s style='width:48px;height:48px;cursor:pointer;' onclick='toggleRepo(this, \"%s\")'>%s</h2>", 
-             $img,
-             $repo['url'],
-             $repo['name']); 
-      $forum = $repo['forum'] ? $repo['forum'] : "";
-      $c .= "<table class='tablesorter repositories'><thead><tr><th></th><th>Name</th><th>Author</th><th>Description</th></tr></thead><tbody>";
-      $t = "";
+    $forum = $repo['forum'] ? $repo['forum'] : "";
       foreach ($repo['templates'] as $template) {
         if ($filter) {
           echo "<script>$('searchbox').val('$filter');$('#searchbox').focus().val($('#searchbox').val());</script>";
@@ -273,18 +272,20 @@ switch ($_POST['action']) {
           }
           if ($hasAll < count($searchTerms) ) continue; 
         }
-        $t .= sprintf("<tr><td><a href='/Docker/AddContainer?xmlTemplate=default:%s'  title='Click To Add Container' target='_blank'><img src='%s' style='width:48px;height:48px;'></a></td><td>%s%s</td><td>%s</td><td>%s</td></tr>", 
+        $t .= sprintf("<tr><td><a href='/Docker/AddContainer?xmlTemplate=default:%s'  title='Click To Add Container' target='_blank'><img src='%s' style='width:48px;height:48px;'></a></td><td>%s%s</td><td>%s</td><td><strong>%s</strong></td><td>%s</td></tr>", 
                $template['Path'], 
                ($template['Icon'] ? $template['Icon'] : "/plugins/$plugin/images/question.png"), 
                $template['Name'], 
                ( $template['Support'] ? "<div><a href='".$template['Support']."' target='_blank'>( Support )</a></div>" : "" ),
                $template['Author'], 
+	       $repo['name'],
                $template['Description']);
       }
-      if (strlen($t)) {
-        $ct .= $c.$t."</tbody></table><div style='height:30px;'></div>";
-      }
+
+
+
     }
+        $ct .= $c.$t."</tbody></table><div style='height:30px;'></div>";
 
     if (! strlen($ct) && $filter) {
       echo "<div style='padding-top:79px;width:100%;text-align:center;'>
