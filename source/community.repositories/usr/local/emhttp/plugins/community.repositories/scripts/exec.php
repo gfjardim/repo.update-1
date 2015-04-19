@@ -2,7 +2,7 @@
 $plugin = "community.repositories";
 require_once("/usr/local/emhttp/plugins/dynamix.docker.manager/dockerClient.php");
 $DockerTemplates = new DockerTemplates();
-$dockerManPaths['community-templates-url']  = "https://raw.githubusercontent.com/Squidly271/repo.update/master/Repositories.json";
+$dockerManPaths['community-templates-url']  = "https://raw.githubusercontent.com/Squidly271/repo-update-development/master/Repositories.json";
 $dockerManPaths['templates-community']      = "/var/lib/docker/unraid/templates-community";
 $dockerManPaths['community-templates-info'] = "/var/lib/docker/unraid/templates-community/templates.json";
 $infoFile                                   = $dockerManPaths['community-templates-info'];
@@ -164,6 +164,7 @@ class Community {
           $o['Repository']  = stripslashes($doc->getElementsByTagName( "Repository" )->item(0)->nodeValue);
           $o['Author']      = preg_replace("#/.*#", "", $o['Repository']);
           $o['Name']        = stripslashes($doc->getElementsByTagName( "Name" )->item(0)->nodeValue);
+          $o['Beta']        = $Repo['beta'];
           if ( $doc->getElementsByTagName( "Overview" )->length ) {
             $o['Description'] = stripslashes($doc->getElementsByTagName( "Overview" )->item(0)->nodeValue);
             $o['Description'] = preg_replace('#\[([^\]]*)\]#', '<$1>', $o['Description']);
@@ -256,9 +257,11 @@ switch ($_POST['action']) {
 
 
     foreach ($file as $repo) {
+
       $img = in_docker_repos($repo['url']) ? "src='/plugins/$plugin/images/red.png' title='Click To Remove Repository'" : "src='/plugins/$plugin/images/green.png' title='Click To Add Repository'";
     $forum = $repo['forum'] ? $repo['forum'] : "";
       foreach ($repo['templates'] as $template) {
+
         if ($filter) {
           echo "<script>$('searchbox').val('$filter');$('#searchbox').focus().val($('#searchbox').val());</script>";
           $hasAll = 0;
@@ -272,14 +275,18 @@ switch ($_POST['action']) {
           }
           if ($hasAll < count($searchTerms) ) continue; 
         }
-        $t .= sprintf("<tr><td><a href='/Docker/AddContainer?xmlTemplate=default:%s'  title='Click To Add Container' target='_blank'><img src='%s' style='width:48px;height:48px;'></a></td><td>%s%s</td><td>%s</td><td><strong>%s</strong></td><td>%s</td></tr>", 
-               $template['Path'], 
-               ($template['Icon'] ? $template['Icon'] : "/plugins/$plugin/images/question.png"), 
-               $template['Name'], 
-               ( $template['Support'] ? "<div><a href='".$template['Support']."' target='_blank'>( Support )</a></div>" : "" ),
-               $template['Author'], 
-	       $repo['name'],
-               $template['Description']);
+
+	if (stripos($repo['name'],"Beta") == FALSE) {
+
+           $t .= sprintf("<tr><td><a href='/Docker/AddContainer?xmlTemplate=default:%s'  title='Click To Add Container' target='_blank'><img src='%s' style='width:48px;height:48px;'></a></td><td>%s%s</td><td>%s</td><td><strong>%s</strong></td><td>%s</td></tr>", 
+                  $template['Path'], 
+                  ($template['Icon'] ? $template['Icon'] : "/plugins/$plugin/images/question.png"), 
+                  $template['Name'], 
+                  ( $template['Support'] ? "<div><a href='".$template['Support']."' target='_blank'>( Support )</a></div>" : "" ),
+                  $template['Author'], 
+                  $repo['name'],
+                  $template['Description']);
+        }
       }
 
 
@@ -296,6 +303,69 @@ switch ($_POST['action']) {
     } else {
       echo $ct;
     }
+
+  
+
+    $ct='<center><font size=3><strong>Beta Repositories</strong></font></center>';
+    if (! is_array($file)) goto END;
+
+      $c = "<table class='tablesorter repositories'><thead><tr><th></th><th>Name</th><th>Author</th><th>Repository</th><th>Description</th></tr></thead><tbody>";
+      $t = "";
+
+
+    foreach ($file as $repo) {
+
+      $img = in_docker_repos($repo['url']) ? "src='/plugins/$plugin/images/red.png' title='Click To Remove Repository'" : "src='/plugins/$plugin/images/green.png' title='Click To Add Repository'";
+    $forum = $repo['forum'] ? $repo['forum'] : "";
+      foreach ($repo['templates'] as $template) {
+
+
+
+        if ($filter) {
+          echo "<script>$('searchbox').val('$filter');$('#searchbox').focus().val($('#searchbox').val());</script>";
+          $hasAll = 0;
+          foreach (explode(" ", $filter) as $k) if($k) $searchTerms[] = $k;
+          foreach ($searchTerms as $keyword) {
+            if (! $keyword) continue;
+            if ( preg_match("#$keyword#i", $template['Name']) || preg_match("#$keyword#i", $template['Author']) || preg_match("#$keyword#i", $template['Description']) ) $hasAll += 1;
+            $template['Name'] = highlight($keyword, $template['Name'] );
+            $template['Author'] = highlight($keyword, $template['Author'] );
+            $template['Description'] = highlight($keyword, $template['Description']);
+          }
+          if ($hasAll < count($searchTerms) ) continue;
+        }
+
+        if (stripos($repo['name'],"beta") !== FALSE) {
+
+           $t .= sprintf("<tr><td><a href='/Docker/AddContainer?xmlTemplate=default:%s'  title='Click To Add Container' target='_blank'><img src='%s' style='width:48px;height:48px;'></a></td><td>%s%s</td><td>%s</td><td><strong>%s</strong></td><td>%s</td></tr>",
+
+                  $template['Path'],
+                  ($template['Icon'] ? $template['Icon'] : "/plugins/$plugin/images/question.png"),
+                  $template['Name'],
+                  ( $template['Support'] ? "<div><a href='".$template['Support']."' target='_blank'>( Support )</a></div>" : "" ),
+                  $template['Author'],
+                  $repo['name'],
+                  $template['Description']);
+        }
+      }
+
+
+
+    }
+        $ct .= $c.$t."</tbody></table><div style='height:30px;'></div>";
+
+    if (! strlen($ct) && $filter) {
+      echo "<div style='padding-top:79px;width:100%;text-align:center;'>
+              <div style='background: linear-gradient(#E0E0E0,#C0C0C0);padding: 5px 20px 5px 6px;text-align:left;'><i class='fa fa-search fa-lg'></i> Search Results</div>
+              <div style='text-align:center;font-style:italic;padding-top:10px;'>Your search - <b>$filter</b> -  did not match any containers.</div>
+              </div>
+            </div>";
+    } else {
+      echo $ct;
+    }
+
+
+
     END:
     echo "<script>
             var searching = false;
