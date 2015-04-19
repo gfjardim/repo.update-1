@@ -276,7 +276,7 @@ switch ($_POST['action']) {
           if ($hasAll < count($searchTerms) ) continue; 
         }
 
-	if (stripos($repo['name'],"Beta") == FALSE) {
+	if (stripos($repo['name']," Beta ") == FALSE) {
 
            $t .= sprintf("<tr><td><a href='/Docker/AddContainer?xmlTemplate=default:%s'  title='Click To Add Container' target='_blank'><img src='%s' style='width:48px;height:48px;'></a></td><td>%s%s</td><td>%s</td><td><strong>%s</strong></td><td>%s</td></tr>", 
                   $template['Path'], 
@@ -292,21 +292,20 @@ switch ($_POST['action']) {
 
 
     }
-        $ct .= $c.$t."</tbody></table><div style='height:30px;'></div>";
+    $ct .= $c.$t."</tbody></table><div style='height:30px;'></div>";
 
-    if (! strlen($ct) && $filter) {
+    if (! strlen($t) && $filter) {
       echo "<div style='padding-top:79px;width:100%;text-align:center;'>
               <div style='background: linear-gradient(#E0E0E0,#C0C0C0);padding: 5px 20px 5px 6px;text-align:left;'><i class='fa fa-search fa-lg'></i> Search Results</div>
-              <div style='text-align:center;font-style:italic;padding-top:10px;'>Your search - <b>$filter</b> -  did not match any containers.</div>
+              <div style='text-align:center;font-style:italic;padding-top:10px;'><font size=3>Your search - <b>$filter</b> -  did not match any <strong>stable</strong> containers.</font></div>
               </div>
             </div>"; 
+
     } else {
       echo $ct;
     }
 
-  
-
-    $ct='<center><font size=3><strong>Beta Repositories</strong></font></center>';
+    $ct='';
     if (! is_array($file)) goto END;
 
       $c = "<table class='tablesorter repositories'><thead><tr><th></th><th>Name</th><th>Author</th><th>Repository</th><th>Description</th></tr></thead><tbody>";
@@ -335,7 +334,7 @@ switch ($_POST['action']) {
           if ($hasAll < count($searchTerms) ) continue;
         }
 
-        if (stripos($repo['name'],"beta") !== FALSE) {
+        if (stripos($repo['name']," beta ") !== FALSE) {
 
            $t .= sprintf("<tr><td><a href='/Docker/AddContainer?xmlTemplate=default:%s'  title='Click To Add Container' target='_blank'><img src='%s' style='width:48px;height:48px;'></a></td><td>%s%s</td><td>%s</td><td><strong>%s</strong></td><td>%s</td></tr>",
 
@@ -354,14 +353,15 @@ switch ($_POST['action']) {
     }
         $ct .= $c.$t."</tbody></table><div style='height:30px;'></div>";
 
-    if (! strlen($ct) && $filter) {
+    if (! strlen($t) && $filter) {
       echo "<div style='padding-top:79px;width:100%;text-align:center;'>
               <div style='background: linear-gradient(#E0E0E0,#C0C0C0);padding: 5px 20px 5px 6px;text-align:left;'><i class='fa fa-search fa-lg'></i> Search Results</div>
-              <div style='text-align:center;font-style:italic;padding-top:10px;'>Your search - <b>$filter</b> -  did not match any containers.</div>
+              <div style='text-align:center;font-style:italic;padding-top:10px;'><font size=3>Your search - <b>$filter</b> -  did not match any <strong>beta</strong> containers.</font></div>
               </div>
             </div>";
     } else {
-      echo $ct;
+          echo "<center><font size=4><strong>Beta Repositories</strong></font></center>";
+	  echo $ct;
     }
 
 
