@@ -1,0 +1,116 @@
+Menu="Docker:4"
+Title="Community Repositories"
+Cond="(pgrep('docker')!==false)"
+Markdown="false"
+---
+<?
+$plugin ="community.repositories";
+?>
+<link rel="stylesheet" type="text/css" href="/plugins/<?=$plugin;?>/assets/waitMe.min.css">
+<link type="text/css" rel="stylesheet" href="/webGui/styles/font-awesome.min.css">
+<style type="text/css">
+  table.repositories tr>td{text-align:center;width:55px;padding-left:10px;padding-right:0;white-space:nowrap;}
+  table.repositories tr>td+td+td{padding: 10px 12px 10px 0px;text-align:left;vertical-align:text-top;white-space:normal;width:auto;}
+  .searchsubmit {
+    font-family: 'FontAwesome';
+    width: 29px;
+    height: 26px;
+    border: 1px solid #dadada;
+    border-radius:0px 4px 4px 0px;
+    font-size: 11px;
+    position: relative;
+    padding: 0px 2px 0px 2px;
+    background: #dadada;
+    border: none;
+    cursor: hand; cursor: pointer;
+  }
+</style>
+
+<script type="text/javascript" src="/plugins/<?=$plugin;?>/assets/waitMe.min.js"></script>
+<script type="text/javascript">
+  var URL = "/plugins/<?=$plugin;?>/scripts/exec.php";
+  var imgRed = {src:"/plugins/<?=$plugin;?>/images/red.png",title:'Click To Remove Container'};
+  var imgGreen = {src:"/plugins/<?=$plugin;?>/images/green.png",title:'Click To Add Container'};
+  var tab_docker_community = $('input[name$="tabs"]').length;
+  $('#tab'+tab_docker_community).bind({click:function() {pin_tab(tab_docker_community); loadCommunityTab(tab_docker_community);}});
+  $(function(){
+    loadCommunityTab(tab_docker_community);
+    searchBoxIcon();
+    var searchbox = $('#searchbox');
+    searchbox.bind('change paste keyup', function(){searchBoxIcon();}); 
+    searchbox.keyup(function (e){if(e.which == 13){doSearch();}});
+  });
+
+  $.fn.textWidth = function(text, font) {
+    if (!$.fn.textWidth.fakeEl) $.fn.textWidth.fakeEl = $('<span>').hide().appendTo(document.body);
+    $.fn.textWidth.fakeEl.text(text || this.val() || this.text()).css('font', font || this.css('font'));
+    return $.fn.textWidth.fakeEl.width();
+  };
+  function minLength(text, font) {
+    terms=text.split(" ");min = 0;
+    for (var i = terms.length - 1; i >= 0; i--) {if (terms[i].trim().length) {min = Math.max(terms[i].length,min);}};
+    for (var i = terms.length - 1; i >= 0; i--) {if (terms[i].trim().length) {min = Math.min(terms[i].length,min);}};
+    return min;
+  }
+  function searchBoxIcon(icon) {
+    if (icon == 'remove' && $('#searchbox').val().length) {
+      $('#search_button').attr('class','fa fa-lg fa-remove');$('.searchsubmit').unbind('click').click(function(){$('#searchbox').val('');doSearch();});
+    } else if (minLength($("#searchbox").val()) > 2 || ! $('#searchbox').val().length) {
+      $('#search_button').attr('class','fa fa-lg fa-search');$('.searchsubmit').unbind('click').click(function(){doSearch();});
+    } else {
+      $('#search_button').attr('class','fa fa-lg fa-ban');$('.searchsubmit').unbind('click');
+    }
+  }
+  function startWaitMe(el) {
+    <?if ($display['theme'] == 'white'):?>
+    $(el).waitMe({effect:'ios',text:'Loading repositories, please wait...',bg:'rgba(255,255,255,0.9)',color:'#000',sizeW:'',sizeH:'',source:''});
+    <?else:?>
+    $(el).waitMe({effect:'ios',text:'Loading repositories, please wait...',bg:'rgba(0,0,0,0.7)',color:'#FFF',sizeW:'',sizeH:'',source:''});
+    <?endif;?>
+    $('.waitMe_content').css('top','100px');
+  }
+  function toggleRepo(img, url) {
+    $(img).load(function(){
+      $.post(URL,{action:'toggle_repo', url:url},function(data) { 
+        if(data.status){ if(data.status == 'enabled'){
+          $(img).attr('title',imgRed.title).attr('src',imgRed.src);
+        } else {
+          $(img).attr('title',imgGreen.title).attr('src',imgGreen.src);
+        }
+      }},'json');
+      $(img).unbind('load');
+    });
+    $(img).attr('src', '/plugins/<?=$plugin;?>/images/spinner.gif');
+  }
+  function forceUpdate() {
+    $.post(URL,{action:'force_update'},function(data){loadCommunityTab(tab_docker_community);},'json');
+  }
+  function getContent(filter) {
+    if (filter === undefined) var filter ="";
+    startWaitMe('#repo_content');
+    $.post(URL,{action:'get_content',filter:filter},function(data){$('#templates_content').html(data);$('#repo_content').waitMe('hide');});
+  }
+  function doSearch() {
+    filter = $("#searchbox").val();
+    if (! searching && (minLength(filter) > 2 || filter.length == 0)) {
+      searching = true;
+      getContent(filter);
+    }
+  }
+  function pin_tab(n) {
+    $.removeCookie('one',{path:'/'});
+    $.cookie('tab','tab'+n,{path:'/'});
+  }
+  function loadCommunityTab(tabnum){
+    if ($('#tab'+tabnum).is(':checked')) {
+      setTimeout('getContent()',250);
+    }
+  };
+</script>
+<div style='position:relative;float:right;padding-top:40px;padding-bottom:5px;vertical-align:text-bottom;'>
+  <input type='text' id='searchbox' placeholder='Search' style='position:relative;left: 15px;'><button class='searchsubmit'><i id='search_button' class='fa fa-remove fa-lg'></i></button>
+  <span style='width:10px;'>&nbsp;</span><input type='button' value='Update Repositories' onclick='forceUpdate();'>
+</div>
+<div id='repo_content'  style='min-height:200px;'>
+  <div id='templates_content' style='min-height:200px;'></div>
+</div>

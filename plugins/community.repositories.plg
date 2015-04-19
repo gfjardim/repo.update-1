@@ -1,0 +1,90 @@
+<?xml version='1.0' standalone='yes'?>
+<!DOCTYPE PLUGIN [
+<!ENTITY name      "community.repositories">
+<!ENTITY author    "gfjardim/Squid">
+<!ENTITY version   "2015.04.17">
+<!ENTITY launch    "Docker">
+<!ENTITY plugdir   "/usr/local/emhttp/plugins/&name;">
+<!ENTITY github    "Squidly271/repo.update">
+<!ENTITY pluginURL "https://raw.githubusercontent.com/&github;/master/plugins/&name;.plg">
+]>
+
+<PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;">
+
+<CHANGES>
+###2015.04.18###
+- Fix error while downloading templates
+
+###2015.04.17###
+- Silence warning on malformed XML files
+
+###2015.04.15###
+- Changed order of repositories to alphabetical
+
+###2015.04.14###
+- Fix tabbed view
+- Fix Docker Settings in last position
+- Better searchbox functionality; disable search auto submit.
+
+###2015.04.13b###
+- Add Search placeholder
+
+###2015.04.13a###
+- Added search box
+
+###2015.04.12###
+- Added support links
+
+###2015.04.11###
+- Initial Release
+</CHANGES>
+
+<!-- The 'pre-install' script. -->
+<FILE Run="/bin/bash">
+<INLINE>
+# Remove old 'source' files
+rm -f $(ls /boot/config/plugins/&name;/&name;*.txz 2>/dev/null|grep -v '&version;')
+if [[ -d /boot/config/plugins/repo.update ]]; then rm -rf /boot/config/plugins/repo.update; fi
+if [[ -d /usr/local/emhttp/plugins/repo.update ]]; then rm -rf /usr/local/emhttp/plugins/repo.update; fi
+if [[ -n $(ls /boot/config/plugins/repo.update*.plg 2>/dev/null) ]]; then rm /boot/config/plugins/repo.update*.plg; fi
+#FIX DOCKER PAGE ORDER
+sed -i -e 's/Menu="Docker"/Menu="Docker:1"/' /usr/local/emhttp/plugins/dynamix.docker.manager/DockerContainers.page
+sed -i -e 's/Menu="Docker"/Menu="Docker:2"/' /usr/local/emhttp/plugins/dynamix.docker.manager/DockerRepositories.page
+sed -i -e 's/Menu="Docker"/Menu="Docker:3"/' /usr/local/emhttp/plugins/dynamix.docker.manager/DockerSettings.page
+</INLINE>
+</FILE>
+
+<!--
+The 'source' file.
+-->
+<FILE Name="/boot/config/plugins/&name;/&name;-&version;.txz" Run="upgradepkg --install-new">
+<URL>https://raw.github.com/&github;/master/archive/&name;-&version;.txz</URL>
+</FILE>
+
+<!--
+The 'post-install' script
+-->
+<FILE Run="/bin/bash">
+<INLINE>
+echo ""
+echo "----------------------------------------------------"
+echo " &name; has been installed."
+echo " Copyright 2015, gfjardim, Squid Software"
+echo " Version: &version;"
+echo "----------------------------------------------------"
+echo ""
+</INLINE>
+</FILE>
+
+<!--
+The 'remove' script.
+-->
+<FILE Run="/bin/bash" Method="remove">
+<INLINE>
+removepkg &name;-&version;
+rm -rf &plugdir;
+rm -rf /boot/config/plugins/&name;
+rm -rf /var/lib/docker/unraid/templates-community
+</INLINE>
+</FILE> 
+</PLUGIN>
