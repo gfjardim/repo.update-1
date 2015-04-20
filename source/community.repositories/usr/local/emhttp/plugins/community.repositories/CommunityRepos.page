@@ -127,7 +127,6 @@ function hideshow (){
   <input type='text' id='searchbox' placeholder='Search' style='position:relative;left: 15px;'><button class='searchsubmit'><i id='search_button' class='fa fa-remove fa-lg'></i></button>
   <span style='width:10px;'>&nbsp;</span><input type='button' value='Update Repositories' onclick='forceUpdate();'>
 </div>
-<input type='button' value='Show/Hide All Apps' onclick='hideshow();'>
 <div id='repo_content'  style='min-height:200px;'>
   <div id='templates_content' style='min-height:200px;'></div>
 </div>

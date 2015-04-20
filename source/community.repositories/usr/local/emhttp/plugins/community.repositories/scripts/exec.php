@@ -254,8 +254,44 @@ switch ($_POST['action']) {
     $ct='';
     if (! is_array($file)) goto END;
 
-	echo "<font size=6><center>MY APPS GO HERE</center></font>";
+	echo "<font size=3><center>My Current Application Templates</center></font>";
 
+	$myApps = glob('/boot/config/plugins/dockerMan/templates-user/*.xml');
+	echo "<table class='tablesorter repositories' id='myApps'><thead><tr><th></th><th>Name</th><th>Author</th><th>Description</th></tr></thead><tbody>";
+
+	foreach ($myApps as $myApp) {
+	        if (is_file($myApp)){
+        	  $doc              = new DOMDocument();
+	          @$doc->load($myApp);
+        	  $myPath           = $myApp;
+	          $myRepository     = stripslashes($doc->getElementsByTagName( "Repository" )->item(0)->nodeValue);
+        	  $myAuthor         = preg_replace("#/.*#", "", $myRepository);
+	          $myName           = stripslashes($doc->getElementsByTagName( "Name" )->item(0)->nodeValue);
+	          if ( $doc->getElementsByTagName( "Overview" )->length ) {
+        		    $myDescription    = stripslashes($doc->getElementsByTagName( "Overview" )->item(0)->nodeValue);
+		             $myDescription    = preg_replace('#\[([^\]]*)\]#', '<$1>', $myDescription);
+	          } else {
+        		     $myDescription   = stripslashes($doc->getElementsByTagName( "Description" )->item(0)->nodeValue);
+		             $myDescription   = preg_replace("#\[br\s*\]#i", "{}", $myDescription);
+		             $myDescription   = preg_replace("#\[b[\\\]*\s*\]#i", "||", $myDescription);
+		             $myDescription   = preg_replace('#\[([^\]]*)\]#', '<$1>', $myDescription);
+		             $myDescription   = preg_replace("#<span.*#si", "", $myDescription);
+		             $myDescription   = preg_replace("#<[^>]*>#i", '', $myDescription);
+		             $myDescription   = preg_replace("#"."{}"."#i", '<br>', $myDescription);
+		             $myDescription   = preg_replace("#"."\|\|"."#i", '<b>', $myDescription);
+            // $o['Description'] .= "<span style='font-style:italic;font-weight:bold;'>&#402;ix</span>";
+          	}
+
+	          $myIcon          = stripslashes($doc->getElementsByTagName( "Icon" )->item(0)->nodeValue);
+		echo "<tr><td><a href='/Docker/AddContainer?xmlTemplate=default:".$myPath."' title='Click To Update Container' target='_blank'><img src='".$myIcon."' style='width:48px;height:48px;'></a></td>";
+		echo "<td>".$myName."</td><td>".$myAuthor."</td><td>".$myDescription."</td></tr>";
+	  }
+
+	}
+
+echo "<input type='button' value='Show/Hide All Apps' onclick='hideshow();'>";
+
+    $ct='';
 	if ( $filter ) {
 	      $c = "<table class='tablesorter repositories' id='stable'><thead><tr><th></th><th>Name</th><th>Author</th><th>Repository</th><th>Description</th></tr></thead><tbody>";
 	} else {
