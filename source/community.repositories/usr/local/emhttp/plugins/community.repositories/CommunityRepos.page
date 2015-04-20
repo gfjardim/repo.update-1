@@ -115,18 +115,36 @@ function hideshow (){
         "block" :
         "none";
 
-}
+    showhide=document.getElementById('beta1');
 
+    showhide.style.display = showhide.style.display === "none" ?
+        "block" :
+        "none";
+
+    showhide=document.getElementById('backToTop');
+
+    showhide.style.display = showhide.style.display === "none" ?
+        "block" :
+        "none";
+    showhide=document.getElementById('backToTop1');
+
+    showhide.style.display = showhide.style.display === "none" ?
+        "block" :
+        "none";
+
+}
+	function deleteContainer(container) {
+		var message = "Are you sure you want to delete " + container + "?";
+		var answer = confirm(message);
+	}
   function loadCommunityTab(tabnum){
     if ($('#tab'+tabnum).is(':checked')) {
       setTimeout('getContent()',250);
     }
   };
 </script>
-<div style='position:relative;float:right;padding-top:40px;padding-bottom:5px;vertical-align:text-bottom;'>
-  <input type='text' id='searchbox' placeholder='Search' style='position:relative;left: 15px;'><button class='searchsubmit'><i id='search_button' class='fa fa-remove fa-lg'></i></button>
-  <span style='width:10px;'>&nbsp;</span><input type='button' value='Update Repositories' onclick='forceUpdate();'>
-</div>
 <div id='repo_content'  style='min-height:200px;'>
   <div id='templates_content' style='min-height:200px;'></div>
 </div>
+
+

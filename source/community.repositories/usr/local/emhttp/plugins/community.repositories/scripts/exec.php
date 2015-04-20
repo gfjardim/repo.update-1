@@ -248,16 +248,15 @@ switch ($_POST['action']) {
               </div>"; 
       }
     }
-	echo '<a href="#beta">Jump To Beta</a>';
 
     $file = json_decode(@file_get_contents($infoFile),TRUE);
     $ct='';
     if (! is_array($file)) goto END;
-
-	echo "<font size=3><center>My Current Application Templates</center></font>";
+	echo "<a name='top'></a>";
+	echo "<font size=4><strong>My Current Application Templates</font>";
 
 	$myApps = glob('/boot/config/plugins/dockerMan/templates-user/*.xml');
-	echo "<table class='tablesorter repositories' id='myApps'><thead><tr><th></th><th>Name</th><th>Author</th><th>Description</th></tr></thead><tbody>";
+	echo "<table class='tablesorter repositories' id='myApps'><thead><tr><th></th><th>Name</th><th>Author</th><th>Description</th><th></th></tr></thead><tbody>";
 
 	foreach ($myApps as $myApp) {
 	        if (is_file($myApp)){
@@ -284,13 +283,20 @@ switch ($_POST['action']) {
 
 	          $myIcon          = stripslashes($doc->getElementsByTagName( "Icon" )->item(0)->nodeValue);
 		echo "<tr><td><a href='/Docker/AddContainer?xmlTemplate=default:".$myPath."' title='Click To Update Container' target='_blank'><img src='".$myIcon."' style='width:48px;height:48px;'></a></td>";
-		echo "<td>".$myName."</td><td>".$myAuthor."</td><td>".$myDescription."</td></tr>";
+		echo "<td>".$myName."</td><td>".$myAuthor."</td><td>".$myDescription."</td>";
+		echo "<td><img src=/plugins/dynamix.docker.manager/assets/images/remove.png width=30 title='Delete ".basename($myPath)." template' onclick='deleteContainer(\"$myPath\")'></td></tr>";
 	  }
 
 	}
+	echo "</table>";
 
-echo "<input type='button' value='Show/Hide All Apps' onclick='hideshow();'>";
+	echo "<a name='search'></a><a href='#top'>Back To Top</a>";
 
+echo "<div style='position:relative;float:right;padding-top:40px;padding-bottom:5px;vertical-align:text-bottom;'>
+	<input type='text' id='searchbox' placeholder='Search Applications' style='position:relative;left: 15px;'><button class='searchsubmit'><i id='search_button' class='fa fa-remove fa-lg'></i></button>
+	<span style='width:10px;'>&nbsp;</span><input type='button' value='Update App List' onclick='forceUpdate();'><input type='button' value='Hide/Show App List' onclick=hideshow();>
+	</div>";
+echo "<br><br><br><br><br><br>";
     $ct='';
 	if ( $filter ) {
 	      $c = "<table class='tablesorter repositories' id='stable'><thead><tr><th></th><th>Name</th><th>Author</th><th>Repository</th><th>Description</th></tr></thead><tbody>";
@@ -339,14 +345,19 @@ echo "<input type='button' value='Show/Hide All Apps' onclick='hideshow();'>";
     $ct .= $c.$t."</tbody></table><div style='height:30px;'></div>";
 
     if (! strlen($t) && $filter) {
-      echo "<div style='padding-top:79px;width:100%;text-align:center;'>
+     echo "<div style='padding-top:79px;width:100%;text-align:center;'>
               <div style='background: linear-gradient(#E0E0E0,#C0C0C0);padding: 5px 20px 5px 6px;text-align:left;'><i class='fa fa-search fa-lg'></i> Search Results</div>
-              <div style='text-align:center;font-style:italic;padding-top:10px;'><font size=3>Your search - <b>$filter</b> -  did not match any <strong>stable</strong> containers.</font></div>
+            <div style='text-align:center;font-style:italic;padding-top:10px;'><font size=3>Your search - <b>$filter</b> -  did not match any <strong>stable</strong> containers.</font></div>
               </div>
             </div>"; 
 
     } else {
       echo $ct;
+	if ($filter) {
+		echo "<a href='#search' id='backToTop'>Back To Search</a>";
+	} else {
+                echo "<a href='#search' id='backToTop' hidden>Back To Search</a>";
+	}
     }
 
     $ct='';
@@ -409,8 +420,20 @@ echo "<input type='button' value='Show/Hide All Apps' onclick='hideshow();'>";
               </div>
             </div>";
     } else {
-          echo '<center><font size=4><strong><a name="beta" >Beta Repositories</a></strong></font></center>';
+	  if ($filter) {
+	          echo '<center><font size=4><strong><p id="beta1">Beta Applications</a></strong></font></center>';
+	  } else {
+                  echo '<center><font size=4><strong><p id="beta1" hidden>Beta Applications</a></strong></font></center>';
+	  }
+	
 	  echo $ct;
+        
+	if ($filter) {
+		echo "<a href='#search' id='backToTop1'>Back To Search</a>";
+	} else {
+                echo "<a href='#search' id='backToTop1' hidden>Back To Search</a>";
+	}
+
     }
 
 
