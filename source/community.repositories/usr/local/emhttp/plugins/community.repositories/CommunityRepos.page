@@ -101,6 +101,22 @@ $plugin ="community.repositories";
     $.removeCookie('one',{path:'/'});
     $.cookie('tab','tab'+n,{path:'/'});
   }
+
+function hideshow (){
+    var showhide=document.getElementById('stable');
+
+    showhide.style.display = showhide.style.display === "none" ? 
+        "block" : 
+        "none";  
+
+    showhide=document.getElementById('beta');
+
+    showhide.style.display = showhide.style.display === "none" ?
+        "block" :
+        "none";
+
+}
+
   function loadCommunityTab(tabnum){
     if ($('#tab'+tabnum).is(':checked')) {
       setTimeout('getContent()',250);
@@ -109,8 +125,9 @@ $plugin ="community.repositories";
 </script>
 <div style='position:relative;float:right;padding-top:40px;padding-bottom:5px;vertical-align:text-bottom;'>
   <input type='text' id='searchbox' placeholder='Search' style='position:relative;left: 15px;'><button class='searchsubmit'><i id='search_button' class='fa fa-remove fa-lg'></i></button>
-  <span style='width:10px;'>&nbsp;</span><input type='button' value='Update Applications' onclick='forceUpdate();'>
+  <span style='width:10px;'>&nbsp;</span><input type='button' value='Update Repositories' onclick='forceUpdate();'>
 </div>
+<input type='button' value='Show/Hide All Apps' onclick='hideshow();'>
 <div id='repo_content'  style='min-height:200px;'>
   <div id='templates_content' style='min-height:200px;'></div>
 </div>

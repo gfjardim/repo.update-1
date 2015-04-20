@@ -248,11 +248,19 @@ switch ($_POST['action']) {
               </div>"; 
       }
     }
+	echo '<a href="#beta">Jump To Beta</a>';
+
     $file = json_decode(@file_get_contents($infoFile),TRUE);
     $ct='';
     if (! is_array($file)) goto END;
 
-      $c = "<table class='tablesorter repositories'><thead><tr><th></th><th>Name</th><th>Author</th><th>Repository</th><th>Description</th></tr></thead><tbody>";
+	echo "<font size=6><center>MY APPS GO HERE</center></font>";
+
+	if ( $filter ) {
+	      $c = "<table class='tablesorter repositories' id='stable'><thead><tr><th></th><th>Name</th><th>Author</th><th>Repository</th><th>Description</th></tr></thead><tbody>";
+	} else {
+              $c = "<table class='tablesorter repositories' id='stable' hidden><thead><tr><th></th><th>Name</th><th>Author</th><th>Repository</th><th>Description</th></tr></thead><tbody>";
+	}
       $t = "";
 
 
@@ -308,7 +316,12 @@ switch ($_POST['action']) {
     $ct='';
     if (! is_array($file)) goto END;
 
-      $c = "<table class='tablesorter repositories'><thead><tr><th></th><th>Name</th><th>Author</th><th>Repository</th><th>Description</th></tr></thead><tbody>";
+        if ( $filter ) {
+              $c = "<table class='tablesorter repositories' id='beta'><thead><tr><th></th><th>Name</th><th>Author</th><th>Repository</th><th>Description</th></tr></thead><tbody>";
+        } else {
+              $c = "<table class='tablesorter repositories' id='beta' hidden><thead><tr><th></th><th>Name</th><th>Author</th><th>Repository</th><th>Description</th></tr></thead><tbody>";
+        }
+
       $t = "";
 
 
@@ -360,7 +373,7 @@ switch ($_POST['action']) {
               </div>
             </div>";
     } else {
-          echo "<center><font size=4><strong>Beta Repositories</strong></font></center>";
+          echo '<center><font size=4><strong><a name="beta" >Beta Repositories</a></strong></font></center>';
 	  echo $ct;
     }
 
