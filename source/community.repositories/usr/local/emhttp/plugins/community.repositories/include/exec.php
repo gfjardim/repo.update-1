@@ -3,6 +3,7 @@ require_once("/usr/local/emhttp/plugins/dynamix.docker.manager/dockerClient.php"
 
 $plugin = "community.repositories";
 $DockerTemplates = new DockerTemplates();
+$DockerClient = new DockerClient();
 $dockerManPaths['community-templates-url']  = "https://raw.githubusercontent.com/Squidly271/repo.update/master/Repositories.json";
 $dockerManPaths['templates-community']      = "/var/lib/docker/unraid/templates-community";
 $dockerManPaths['community-templates-info'] = "/var/lib/docker/unraid/templates-community/templates.json";
@@ -234,6 +235,7 @@ case 'get_content':
   if (!is_array($file)) break;
 
   $ct='';
+  $containers = array_map(function($ar){return $ar['Image'];}, $DockerClient->getDockerContainers());
   foreach ($file as $repo) {
     if (!$beta && stripos($repo['name'],' beta')) continue;
     $img = in_docker_repos($repo['url']) ? "src='/plugins/$plugin/images/red.png' title='Click to remove repository'" : "src='/plugins/$plugin/images/green.png' title='Click to add repository'";
@@ -252,11 +254,12 @@ case 'get_content':
         $c = $i ? "" : " class='topRow'";
         $tr_td = $i++ ? "<tr class='expand-child'>" : "<tr><td${c} rowspan='_ROWS_' style='text-align:left;vertical-align:top'>$label (_ROWS_)</td>";
       }
-      $t .= sprintf("$tr_td<td${c} style='text-align:center;margin:0;padding:0'><a href='/Docker/AddContainer?xmlTemplate=default:%s' title='Click to add container' target='_blank'><img src='%s' style='width:48px;height:48px;'></a></td><td${c}>%s%s</td><td${c}>%s</td><td${c}><span class='desc_readmore' style='display:block'>%s</span></td></tr>",
+      $t .= sprintf("$tr_td<td${c} style='text-align:center;margin:0;padding:0'><a href='/Docker/AddContainer?xmlTemplate=default:%s' title='Click to add container' target='_blank'><img src='%s' style='width:48px;height:48px;'></a></td><td${c}>%s%s%s</td><td${c}>%s</td><td${c}><span class='desc_readmore' style='display:block'>%s</span></td></tr>",
             $template['Path'],
            ($template['Icon'] ? $template['Icon'] : "/plugins/$plugin/images/question.png"),
             $template['Name'],
            ($template['Support'] ? "<div><a href='".$template['Support']."' target='_blank'>[Support]</a></div>" : ""),
+           ( (preg_grep("#{$template[Repository]}#i", $containers)) ? "installed" : "" ),
             $template['Author'],
             $template['Description']);
     }
