@@ -1,8 +1,8 @@
 <?xml version='1.0' standalone='yes'?>
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "community.repositories">
-<!ENTITY author    "gfjardim/Squid">
-<!ENTITY version   "2015.04.15">
+<!ENTITY author    "gfjardim/bonienl/Squid">
+<!ENTITY version   "2015.04.26">
 <!ENTITY launch    "Docker">
 <!ENTITY plugdir   "/usr/local/emhttp/plugins/&name;">
 <!ENTITY github    "Squidly271/repo.update">
@@ -12,6 +12,25 @@
 <PLUGIN name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;">
 
 <CHANGES>
+###2015.04.26###
+- Added context aware help
+
+###2015.04.25###
+- Added show / hide Beta repositories
+- Basic page navigation added
+
+###2015.04.24a###
+- Added back in highligh of search results
+
+###2015.04.24###
+- Repository tables are now collapsable
+
+###2015.04.18###
+- Fix error while downloading templates
+
+###2015.04.17###
+- Silence warning on malformed XML files
+
 ###2015.04.15###
 - Changed order of repositories to alphabetical
 
@@ -63,7 +82,7 @@ The 'post-install' script
 echo ""
 echo "----------------------------------------------------"
 echo " &name; has been installed."
-echo " Copyright 2015, gfjardim, Squid Software"
+echo " Copyright 2015, gfjardim, bergware, Squid Software"
 echo " Version: &version;"
 echo "----------------------------------------------------"
 echo ""

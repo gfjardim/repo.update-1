@@ -12,7 +12,8 @@
   {
     "name": "smdion-beta",
     "url": "https://github.com/smdion/docker-containers/tree/beta-templates",
-    "forum": "http://lime-technology.com/forum/index.php?topic=34009.0"
+    "forum": "http://lime-technology.com/forum/index.php?topic=34009.0",
+    "beta": "true"
   },
   {
     "name": "pducharme",
@@ -37,7 +38,8 @@
   {
     "name": "Sparklyballs-Beta",
     "url": "https://github.com/sparklyballs/beta-repo/tree/master/Sparkly-Beta",
-    "forum": "http://lime-technology.com/forum/index.php?topic=38232.0"
+    "forum": "http://lime-technology.com/forum/index.php?topic=38232.0",
+    "beta": "true"
   },
   {
     "name": "Balloob",
@@ -62,7 +64,8 @@
   {
     "name": "Zuhkov-Beta",
     "url": "https://github.com/Zuhkov/docker-containers/tree/beta-templates",
-    "forum": "http://lime-technology.com/forum/index.php?topic=38410.0"
+    "forum": "http://lime-technology.com/forum/index.php?topic=38410.0",
+    "beta": "true"
   },
   {
     "name": "Spants",
